@@ -1,38 +1,29 @@
-# create-svelte
+# hi-peop-webapp
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+Implementacion frontend de la plataforma Hi-Peop
 
-## Creating a project
+## Setup
 
-If you're seeing this, you've probably already done this step. Congrats!
+Proyecto creado con SvelteKit (npm create svelte@latest)
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+Skeleton Project, con las siguientes opciones:
+- ESLint
+https://github.com/sveltejs/eslint-plugin-svelte
+- Prettier
+https://prettier.io/docs/en/options.htmlhttps://github.com/sveltejs/prettier-plugin-svelte#options
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Comandos para crear un dev-server local:
 
 ```bash
+# install dependencies
+npm install
+
+# run development server
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
+Por defecto, el proyecto levanta en http://localhost:5173
 
-## Building
-
-To create a production version of your app:
-
+Para corregir errores de estilos y formateos:
 ```bash
-npm run build
+npm run format
 ```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
