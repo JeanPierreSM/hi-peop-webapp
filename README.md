@@ -15,10 +15,10 @@ https://prettier.io/docs/en/options.htmlhttps://github.com/sveltejs/prettier-plu
 Comandos para crear un dev-server local:
 
 ```bash
-# install dependencies
+# install dependencies (Node 18 required)
 npm install
 
-# run development server
+# run development server (Node 18 required)
 npm run dev
 ```
 Por defecto, el proyecto levanta en http://localhost:5173
