@@ -1,1 +1,7 @@
-<h1>Signup Page</h1>
+<script>
+</script>
+
+<main>TO BE IMPLEMENTED</main>
+
+<style>
+</style>

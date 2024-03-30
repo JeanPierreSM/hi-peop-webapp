@@ -7,9 +7,14 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"prepare": "npm run smui-theme",
+		"smui-theme": "smui-theme compile static/smui.css -i src/theme"
 	},
 	"devDependencies": {
+		"@smui/button": "^7.0.0-beta.18",
+		"@smui/card": "^7.0.0-beta.18",
+		"@smui/textfield": "^7.0.0-beta.18",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
@@ -19,6 +24,7 @@
 		"eslint-plugin-svelte": "^2.35.1",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
+		"smui-theme": "^7.0.0-beta.18",
 		"svelte": "^4.2.7",
 		"vite": "^5.0.3"
 	},

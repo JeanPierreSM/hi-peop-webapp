@@ -30,3 +30,13 @@ Para corregir errores de estilos y formateos:
 ```bash
 npm run format
 ```
+
+
+## Svelte Material UI
+
+Cada componente debe ser instalado de forma independiente.
+Luego de instalar el componente deseado, correr:
+
+```bash
+npm run prepare
+```
