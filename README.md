@@ -31,7 +31,6 @@ Para corregir errores de estilos y formateos:
 npm run format
 ```
 
-
 ## Svelte Material UI
 
 Cada componente debe ser instalado de forma independiente.

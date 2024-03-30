@@ -12,7 +12,7 @@
 	};
 </script>
 
-<main>
+<body>
 	<img class="logo" src="hipeop-logo.png" alt="logo" style="width: 200px;" />
 	<div class="form-card-container">
 		<Card variant="outlined" padded>
@@ -29,6 +29,7 @@
 					variant="outlined"
 					bind:value={password}
 					label="Contraseña"
+					type="password"
 				/>
 				<Button
 					style="margin-top: 30px; background: linear-gradient(to right, #4D50A1, #DD2792); color: white; border-radius: 10px; height: 45px; font-weight: bold;"
@@ -42,12 +43,18 @@
 			</form>
 		</Card>
 	</div>
-</main>
+</body>
 
 <style>
-	main {
+	body {
+		text-align: center;
+		padding: 1em;
+		max-width: 240px;
+		height: 100vh;
+		margin: 0 !important;
+		background-color: #ffe6e6;
 		background-image: url('/signup-background.jpg');
-		 background-size: cover;
+		background-size: cover;
 	}
 	.login-box {
 		height: 50px;
@@ -72,15 +79,8 @@
 		flex-direction: column;
 		padding: 15px 15px 0 15px;
 	}
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-		background-color: #ffe6e6;
-	}
 	@media (min-width: 640px) {
-		main {
+		body {
 			max-width: none;
 		}
 	}
@@ -91,9 +91,9 @@
 		margin-bottom: 2rem;
 	}
 	.dont-have-account-box {
-		font-size: 15px; 
+		font-size: 15px;
 		font-weight: 400;
-		font-family: "Open Sans", sans-serif;
+		font-family: 'Open Sans', sans-serif;
 		margin-top: 20px;
 	}
 </style>
