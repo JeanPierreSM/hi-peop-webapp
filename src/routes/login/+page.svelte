@@ -1,14 +1,21 @@
-<script lang="ts">
+<script>
 	import Card from '@smui/card';
 	import Textfield from '@smui/textfield';
 	import Button, { Label } from '@smui/button';
+	import IoMdEye from 'svelte-icons/io/IoMdEye.svelte';
+	import IoMdEyeOff from 'svelte-icons/io/IoMdEyeOff.svelte';
+	import IconButton from '@smui/icon-button';
 
 	let email = '';
 	let password = '';
+	let showPassword = false;
+
+	const toggleShowPassword = () => {
+		showPassword = !showPassword;
+	};
 
 	const handleSubmit = () => {
-		console.log('email: ', email);
-		console.log('password: ', password);
+		// @ TODO: handle login
 	};
 </script>
 
@@ -29,8 +36,18 @@
 					variant="outlined"
 					bind:value={password}
 					label="Contraseña"
-					type="password"
-				/>
+					type={showPassword ? 'text' : 'password'}
+				>
+					<IconButton slot="trailingIcon" style="margin: 4px 4px 0;" on:click={toggleShowPassword}>
+						<div class="icon">
+							{#if showPassword}
+								<IoMdEye />
+							{:else}
+								<IoMdEyeOff />
+							{/if}
+						</div>
+					</IconButton>
+				</Textfield>
 				<Button
 					style="margin-top: 30px; background: linear-gradient(to right, #4D50A1, #DD2792); color: white; border-radius: 10px; height: 45px; font-weight: bold;"
 					variant="raised"
@@ -95,5 +112,10 @@
 		font-weight: 400;
 		font-family: 'Open Sans', sans-serif;
 		margin-top: 20px;
+	}
+	.icon {
+		width: 28px;
+		height: 28px;
+		color: #4d50a1;
 	}
 </style>

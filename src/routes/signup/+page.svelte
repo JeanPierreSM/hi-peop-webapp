@@ -1,31 +1,32 @@
-<script lang="ts">
+<script>
 	import Card from '@smui/card';
 	import Textfield from '@smui/textfield';
 	import Button, { Label } from '@smui/button';
 	import Checkbox from '@smui/checkbox';
-    import FormField from '@smui/form-field';
-
-	let checked = false;
+	import FormField from '@smui/form-field';
+	import IoMdEye from 'svelte-icons/io/IoMdEye.svelte';
+	import IoMdEyeOff from 'svelte-icons/io/IoMdEyeOff.svelte';
+	import IconButton from '@smui/icon-button';
 
 	let firstName = '';
 	let lastName = '';
 	let email = '';
 	let password = '';
 	let confirmPassword = '';
-	let selectedCheckbox = 'recruiter';
+	let selectedUserType = 'recruiter';
+	let showPassword = false;
 
-	const handleSubmit = () => {
-		console.log('firstName: ', firstName);
-		console.log('lastName: ', lastName);
-		console.log('email: ', email);
-		console.log('password: ', password);
-		console.log('confirmPassword: ', confirmPassword);
-		console.log('selectedCheckbox: ', selectedCheckbox);
+	const toggleShowPassword = () => {
+		showPassword = !showPassword;
 	};
 
-    const handleCheckboxChange = (option) => {
-        selectedCheckbox = option; // Update selected option
-    };
+	const handleCheckboxChange = (option) => {
+		selectedUserType = option;
+	};
+
+	const handleSubmit = () => {
+		// @ TODO: handle signup
+	};
 </script>
 
 <body>
@@ -59,29 +60,55 @@
 					variant="outlined"
 					bind:value={password}
 					label="Contraseña"
-                    type="password"
-				/>
+					type={showPassword ? 'text' : 'password'}
+				>
+					<IconButton slot="trailingIcon" style="margin: 4px 4px 0;" on:click={toggleShowPassword}>
+						<div class="icon">
+							{#if showPassword}
+								<IoMdEye />
+							{:else}
+								<IoMdEyeOff />
+							{/if}
+						</div>
+					</IconButton>
+				</Textfield>
 				<Textfield
 					style="margin-bottom: 20px; "
 					variant="outlined"
 					bind:value={confirmPassword}
 					label="Confirmar contraseña"
-                    type="password"
-				/>
+					type={showPassword ? 'text' : 'password'}
+				>
+					<IconButton slot="trailingIcon" style="margin: 4px 4px 0;" on:click={toggleShowPassword}>
+						<div class="icon">
+							{#if showPassword}
+								<IoMdEye />
+							{:else}
+								<IoMdEyeOff />
+							{/if}
+						</div>
+					</IconButton>
+				</Textfield>
 				<div style="display: flex; align-items: center;">
-                    <div style="margin-right: 85px;">
-                        <FormField>
-                            <Checkbox checked={selectedCheckbox === 'recruiter'} on:change={() => handleCheckboxChange('recruiter')} />
-                            <span slot="label">Soy Recruiter</span>
-                        </FormField>
-                    </div>
-                    <div>
-                        <FormField>
-                            <Checkbox checked={selectedCheckbox === 'candidate'} on:change={() => handleCheckboxChange('candidate')}  />
-                            <span slot="label">Soy Aspirante</span>
-                        </FormField>
-                    </div>
-                </div>
+					<div style="margin-right: 155px;">
+						<FormField>
+							<Checkbox
+								checked={selectedUserType === 'recruiter'}
+								on:change={() => handleCheckboxChange('recruiter')}
+							/>
+							<span slot="label">Soy Recruiter</span>
+						</FormField>
+					</div>
+					<div>
+						<FormField>
+							<Checkbox
+								checked={selectedUserType === 'candidate'}
+								on:change={() => handleCheckboxChange('candidate')}
+							/>
+							<span slot="label">Soy Aspirante</span>
+						</FormField>
+					</div>
+				</div>
 				<Button
 					style="margin-top: 30px; background: linear-gradient(to right, #4D50A1, #DD2792); color: white; border-radius: 10px; height: 45px; font-weight: bold;"
 					variant="raised"
@@ -107,6 +134,11 @@
 		background-image: url('/signup-background.jpg');
 		background-size: cover;
 	}
+	@media (min-width: 640px) {
+		body {
+			max-width: none;
+		}
+	}
 	.signup-box {
 		height: 50px;
 		color: #4d50a1;
@@ -120,7 +152,7 @@
 	.form-card-container {
 		display: flex;
 		flex-direction: column;
-		max-width: 420px;
+		max-width: 490px;
 		margin: 2rem auto;
 		border-radius: 10px;
 		box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
@@ -129,11 +161,6 @@
 		display: flex;
 		flex-direction: column;
 		padding: 15px 15px 0 15px;
-	}
-	@media (min-width: 640px) {
-		body {
-			max-width: none;
-		}
 	}
 	.logo {
 		width: 100px;
@@ -146,5 +173,10 @@
 		font-weight: 400;
 		font-family: 'Open Sans', sans-serif;
 		margin-top: 20px;
+	}
+	.icon {
+		width: 28px;
+		height: 28px;
+		color: #4d50a1;
 	}
 </style>

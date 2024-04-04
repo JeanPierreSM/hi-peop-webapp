@@ -16,6 +16,7 @@
 		"@smui/card": "^7.0.0-beta.18",
 		"@smui/checkbox": "^7.0.0-beta.18",
 		"@smui/form-field": "^7.0.0-beta.18",
+		"@smui/icon-button": "^7.0.0-beta.18",
 		"@smui/textfield": "^7.0.0-beta.18",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
@@ -30,5 +31,8 @@
 		"svelte": "^4.2.7",
 		"vite": "^5.0.3"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"svelte-icons": "^2.1.0"
+	}
 }
