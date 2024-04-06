@@ -5,18 +5,53 @@
 	import IoMdEye from 'svelte-icons/io/IoMdEye.svelte';
 	import IoMdEyeOff from 'svelte-icons/io/IoMdEyeOff.svelte';
 	import IconButton from '@smui/icon-button';
+	import * as yup from 'yup';
+	import triggerYupValidation from '../../utils/triggerYupValidation';
+	import HelperText from '../components/HelperText.svelte';
 
 	let email = '';
 	let password = '';
 	let showPassword = false;
+	let errors = {};
+
+	const loginSchema = yup.object().shape({
+		email: yup
+			.string()
+			.email('Email inválido')
+			.max(50, 'El email no debe tener más de 50 caracteres')
+			.required('Email es un campo requerido'),
+		password: yup
+			.string()
+			.max(50, 'La contraseña no debe tener más de 50 caracteres')
+			.required('Contraseña es un campo requerido')
+	});
 
 	const toggleShowPassword = () => {
 		showPassword = !showPassword;
 	};
 
-	const handleSubmit = () => {
-		// @ TODO: handle login
+	const handleSubmit = async (event) => {
+		event.preventDefault();
+		try {
+			await loginSchema.validate({ email, password }, { abortEarly: false });
+			errors = {};
+			// @TODO: handle login form submission
+			console.log('email: ', email);
+			console.log('password: ', password);
+		} catch (error) {
+			errors = error.inner.reduce((acc, curr) => {
+				acc[curr.path] = curr.message;
+				return acc;
+			}, {});
+		}
 	};
+
+	$: {
+		if (email !== '') triggerYupValidation(loginSchema, errors, 'email', email);
+	}
+	$: {
+		if (password !== '') triggerYupValidation(loginSchema, errors, 'password', password);
+	}
 </script>
 
 <body>
@@ -24,15 +59,18 @@
 	<div class="form-card-container">
 		<Card variant="outlined" padded>
 			<div class="login-box">Iniciar sesión</div>
-			<form on:submit|preventDefault={handleSubmit}>
+			<form>
 				<Textfield
-					style="margin-bottom: 20px;"
+					style="margin-bottom: 5px;"
 					variant="outlined"
 					bind:value={email}
 					label="Email"
 				/>
+				{#if errors.email}
+					<HelperText error={errors.email} />
+				{/if}
 				<Textfield
-					style="margin-bottom: 20px;"
+					style="margin-top: 20px; margin-bottom: 5px;"
 					variant="outlined"
 					bind:value={password}
 					label="Contraseña"
@@ -48,12 +86,17 @@
 						</div>
 					</IconButton>
 				</Textfield>
+				{#if errors.password}
+					<HelperText error={errors.password} />
+				{/if}
 				<Button
-					style="margin-top: 30px; background: linear-gradient(to right, #4D50A1, #DD2792); color: white; border-radius: 10px; height: 45px; font-weight: bold;"
+					style="margin-top: 60px; background: linear-gradient(to right, #4D50A1, #DD2792); color: white; border-radius: 10px; height: 45px; font-weight: bold;"
 					variant="raised"
+					on:click={handleSubmit}
 				>
 					<Label>Ingresar</Label>
 				</Button>
+
 				<p class="dont-have-account-box">
 					¿No tenés una cuenta? <a href="/signup">Registrate aquí</a>
 				</p>

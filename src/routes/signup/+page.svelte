@@ -7,6 +7,9 @@
 	import IoMdEye from 'svelte-icons/io/IoMdEye.svelte';
 	import IoMdEyeOff from 'svelte-icons/io/IoMdEyeOff.svelte';
 	import IconButton from '@smui/icon-button';
+	import * as yup from 'yup';
+	import triggerYupValidation from '../../utils/triggerYupValidation';
+	import HelperText from '../components/HelperText.svelte';
 
 	let firstName = '';
 	let lastName = '';
@@ -15,6 +18,34 @@
 	let confirmPassword = '';
 	let selectedUserType = 'recruiter';
 	let showPassword = false;
+	let errors = {};
+
+	const signupSchema = yup.object().shape({
+		firstName: yup
+			.string()
+			.max(50, 'El Nombre no debe tener más de 50 caracteres')
+			.required('Nombre es un campo requerido'),
+		lastName: yup
+			.string()
+			.max(50, 'El Apellido no debe tener más de 50 caracteres')
+			.required('Apellido es un campo requerido'),
+		email: yup
+			.string()
+			.email('Email inválido')
+			.max(50, 'El email no debe tener más de 50 caracteres')
+			.required('Email es un campo requerido'),
+		password: yup
+			.string()
+			.max(50, 'La contraseña no debe tener más de 50 caracteres')
+			.required('Contraseña es un campo requerido'),
+		confirmPassword: yup
+			.string()
+			.max(50, 'La contraseña no debe tener más de 50 caracteres')
+			.required('Confirmar Contraseña es un campo requerido')
+			.test('passwords-match', 'Las contraseñas deben coincidir', function (value) {
+				return value === this.parent.password;
+			})
+	});
 
 	const toggleShowPassword = () => {
 		showPassword = !showPassword;
@@ -24,9 +55,44 @@
 		selectedUserType = option;
 	};
 
-	const handleSubmit = () => {
-		// @ TODO: handle signup
+	const handleSubmit = async (event) => {
+		event.preventDefault();
+		try {
+			await signupSchema.validate(
+				{ firstName, lastName, email, password, confirmPassword },
+				{ abortEarly: false }
+			);
+			errors = {};
+			// @TODO: handle signup form submission
+			console.log('firstName: ', firstName);
+			console.log('lastName: ', lastName);
+			console.log('email: ', email);
+			console.log('password: ', password);
+			console.log('confirmPassword: ', confirmPassword);
+			console.log('selectedUserType: ', selectedUserType);
+		} catch (error) {
+			errors = error.inner.reduce((acc, curr) => {
+				acc[curr.path] = curr.message;
+				return acc;
+			}, {});
+		}
 	};
+	$: {
+		if (firstName !== '') triggerYupValidation(signupSchema, errors, 'firstName', firstName);
+	}
+	$: {
+		if (lastName !== '') triggerYupValidation(signupSchema, errors, 'lastName', lastName);
+	}
+	$: {
+		if (email !== '') triggerYupValidation(signupSchema, errors, 'email', email);
+	}
+	$: {
+		if (password !== '') triggerYupValidation(signupSchema, errors, 'password', password);
+	}
+	$: {
+		if (confirmPassword !== '')
+			triggerYupValidation(signupSchema, errors, 'confirmPassword', confirmPassword);
+	}
 </script>
 
 <body>
@@ -34,29 +100,43 @@
 	<div class="form-card-container">
 		<Card variant="outlined" padded>
 			<div class="signup-box">Crea tu cuenta. Gratis.</div>
-			<form on:submit|preventDefault={handleSubmit}>
+			<form>
 				<div style="display: flex; justify-content: space-between;">
-					<Textfield
-						style="margin-bottom: 20px; width: 48%;"
-						variant="outlined"
-						bind:value={firstName}
-						label="Nombre"
-					/>
-					<Textfield
-						style="margin-bottom: 20px; width: 48%;"
-						variant="outlined"
-						bind:value={lastName}
-						label="Apellido"
-					/>
+					<div style="width: 48%;">
+						<Textfield
+							style="margin-bottom: 5px;"
+							variant="outlined"
+							bind:value={firstName}
+							label="Nombre"
+						/>
+						{#if errors.firstName}
+							<HelperText error={errors.firstName} />
+						{/if}
+					</div>
+
+					<div style="width: 48%;">
+						<Textfield
+							style="margin-bottom: 5px;"
+							variant="outlined"
+							bind:value={lastName}
+							label="Apellido"
+						/>
+						{#if errors.lastName}
+							<HelperText error={errors.lastName} />
+						{/if}
+					</div>
 				</div>
 				<Textfield
-					style="margin-bottom: 20px; "
+					style="margin-top: 20px; margin-bottom: 5px;"
 					variant="outlined"
 					bind:value={email}
 					label="Email"
 				/>
+				{#if errors.email}
+					<HelperText error={errors.email} />
+				{/if}
 				<Textfield
-					style="margin-bottom: 20px; "
+					style="margin-top: 20px; margin-bottom: 5px;"
 					variant="outlined"
 					bind:value={password}
 					label="Contraseña"
@@ -72,8 +152,11 @@
 						</div>
 					</IconButton>
 				</Textfield>
+				{#if errors.password}
+					<HelperText error={errors.password} />
+				{/if}
 				<Textfield
-					style="margin-bottom: 20px; "
+					style="margin-top: 20px; margin-bottom: 5px;"
 					variant="outlined"
 					bind:value={confirmPassword}
 					label="Confirmar contraseña"
@@ -89,6 +172,9 @@
 						</div>
 					</IconButton>
 				</Textfield>
+				{#if errors.confirmPassword}
+					<HelperText error={errors.confirmPassword} />
+				{/if}
 				<div style="display: flex; align-items: center;">
 					<div style="margin-right: 155px;">
 						<FormField>
@@ -112,6 +198,7 @@
 				<Button
 					style="margin-top: 30px; background: linear-gradient(to right, #4D50A1, #DD2792); color: white; border-radius: 10px; height: 45px; font-weight: bold;"
 					variant="raised"
+					on:click={handleSubmit}
 				>
 					<Label>Registrarse</Label>
 				</Button>
