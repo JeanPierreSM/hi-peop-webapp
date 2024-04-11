@@ -8,6 +8,7 @@
 	import * as yup from 'yup';
 	import triggerYupValidation from '../../utils/triggerYupValidation';
 	import HelperText from '../components/HelperText.svelte';
+	import { postData } from '../../service-layer/api';
 
 	let email = '';
 	let password = '';
@@ -35,14 +36,21 @@
 		try {
 			await loginSchema.validate({ email, password }, { abortEarly: false });
 			errors = {};
-			// @TODO: handle login form submission
-			console.log('email: ', email);
-			console.log('password: ', password);
+			const payload = { email, password };
+			await postData('auth/login', payload);
+			alert('Login exitoso!');
 		} catch (error) {
-			errors = error.inner.reduce((acc, curr) => {
-				acc[curr.path] = curr.message;
-				return acc;
-			}, {});
+			if (error.inner) {
+				// handle yup validation errors
+				errors = error.inner.reduce((acc, curr) => {
+					acc[curr.path] = curr.message;
+					return acc;
+				}, {});
+			} else {
+				// handle API calls errors
+				alert('Login fallido!');
+				console.error('Error: ', error);
+			}
 		}
 	};
 

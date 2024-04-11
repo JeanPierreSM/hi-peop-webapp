@@ -10,6 +10,7 @@
 	import * as yup from 'yup';
 	import triggerYupValidation from '../../utils/triggerYupValidation';
 	import HelperText from '../components/HelperText.svelte';
+	import { postData } from '../../service-layer/api';
 
 	let firstName = '';
 	let lastName = '';
@@ -42,9 +43,7 @@
 			.string()
 			.max(50, 'La contraseña no debe tener más de 50 caracteres')
 			.required('Confirmar Contraseña es un campo requerido')
-			.test('passwords-match', 'Las contraseñas deben coincidir', function (value) {
-				return value === this.parent.password;
-			})
+			.oneOf([yup.ref('password'), null], 'Las contraseñas deben coincidir')
 	});
 
 	const toggleShowPassword = () => {
@@ -60,23 +59,32 @@
 		try {
 			await signupSchema.validate(
 				{ firstName, lastName, email, password, confirmPassword },
-				{ abortEarly: false }
+				{ context: { password }, abortEarly: false }
 			);
 			errors = {};
-			// @TODO: handle signup form submission
-			console.log('firstName: ', firstName);
-			console.log('lastName: ', lastName);
-			console.log('email: ', email);
-			console.log('password: ', password);
-			console.log('confirmPassword: ', confirmPassword);
-			console.log('selectedUserType: ', selectedUserType);
+			const payload = {
+				firstName,
+				lastName,
+				email,
+				password,
+				userType: selectedUserType
+			};
+			await postData('auth/register', payload);
+			alert('Usuario creado exitosamente!');
 		} catch (error) {
-			errors = error.inner.reduce((acc, curr) => {
-				acc[curr.path] = curr.message;
-				return acc;
-			}, {});
+			if (error.inner) {
+				// handle yup validation errors
+				errors = error.inner.reduce((acc, curr) => {
+					acc[curr.path] = curr.message;
+					return acc;
+				}, {});
+			} else {
+				// handle API calls errors
+				console.error('Error: ', error);
+			}
 		}
 	};
+
 	$: {
 		if (firstName !== '') triggerYupValidation(signupSchema, errors, 'firstName', firstName);
 	}
