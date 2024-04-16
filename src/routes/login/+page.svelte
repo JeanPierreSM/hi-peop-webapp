@@ -7,13 +7,18 @@
 	import IconButton from '@smui/icon-button';
 	import * as yup from 'yup';
 	import triggerYupValidation from '../../utils/triggerYupValidation';
-	import HelperText from '../components/HelperText.svelte';
-	import { postData } from '../../service-layer/api';
+	import HelperText from '../../components/HelperText.svelte';
+	import { post } from '../../service-layer/api';
+	import PopupDialog from '../../components/PopupDialog.svelte';
+	import CircularProgress from '@smui/circular-progress';
+	import { goto } from '$app/navigation';
 
 	let email = '';
 	let password = '';
 	let showPassword = false;
 	let errors = {};
+	let loginErrorMsg = null;
+	let loadingLogin = false;
 
 	const loginSchema = yup.object().shape({
 		email: yup
@@ -37,8 +42,9 @@
 			await loginSchema.validate({ email, password }, { abortEarly: false });
 			errors = {};
 			const payload = { email, password };
-			await postData('auth/login', payload);
-			alert('Login exitoso!');
+			loadingLogin = true;
+			await post('auth/login', payload);
+			goto('/home');
 		} catch (error) {
 			if (error.inner) {
 				// handle yup validation errors
@@ -48,9 +54,11 @@
 				}, {});
 			} else {
 				// handle API calls errors
-				alert('Login fallido!');
-				console.error('Error: ', error);
+				loginErrorMsg = error?.message;
+				console.error('Error: ', error?.message);
 			}
+		} finally {
+			loadingLogin = false;
 		}
 	};
 
@@ -101,7 +109,14 @@
 					style="margin-top: 60px; background: linear-gradient(to right, #4D50A1, #DD2792); color: white; border-radius: 10px; height: 45px; font-weight: bold;"
 					variant="raised"
 					on:click={handleSubmit}
+					disabled={loadingLogin}
 				>
+					{#if loadingLogin}
+						<CircularProgress
+							style="height: 16px; width: 16px; margin-right: 16px;"
+							indeterminate
+						/>
+					{/if}
 					<Label>Ingresar</Label>
 				</Button>
 
@@ -111,6 +126,16 @@
 			</form>
 		</Card>
 	</div>
+	<PopupDialog
+		open={loginErrorMsg}
+		type="error"
+		title="Error al iniciar sesión"
+		bodyText={loginErrorMsg}
+		okText="Ok"
+		onOkClick={() => {
+			loginErrorMsg = null;
+		}}
+	/>
 </body>
 
 <style>

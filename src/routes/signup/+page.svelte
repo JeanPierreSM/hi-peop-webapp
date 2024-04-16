@@ -9,8 +9,11 @@
 	import IconButton from '@smui/icon-button';
 	import * as yup from 'yup';
 	import triggerYupValidation from '../../utils/triggerYupValidation';
-	import HelperText from '../components/HelperText.svelte';
-	import { postData } from '../../service-layer/api';
+	import HelperText from '../../components/HelperText.svelte';
+	import { post } from '../../service-layer/api';
+	import { goto } from '$app/navigation';
+	import PopupDialog from '../../components/PopupDialog.svelte';
+	import CircularProgress from '@smui/circular-progress';
 
 	let firstName = '';
 	let lastName = '';
@@ -20,6 +23,9 @@
 	let selectedUserType = 'recruiter';
 	let showPassword = false;
 	let errors = {};
+	let openSignupSuccessPopup = false;
+	let signupErrorMsg = null;
+	let loadingSignup = false;
 
 	const signupSchema = yup.object().shape({
 		firstName: yup
@@ -69,8 +75,9 @@
 				password,
 				userType: selectedUserType
 			};
-			await postData('auth/register', payload);
-			alert('Usuario creado exitosamente!');
+			loadingSignup = true;
+			await post('auth/register', payload);
+			openSignupSuccessPopup = true;
 		} catch (error) {
 			if (error.inner) {
 				// handle yup validation errors
@@ -80,8 +87,11 @@
 				}, {});
 			} else {
 				// handle API calls errors
-				console.error('Error: ', error);
+				signupErrorMsg = error?.message;
+				console.error('Error: ', error?.message);
 			}
+		} finally {
+			loadingSignup = false;
 		}
 	};
 
@@ -207,7 +217,14 @@
 					style="margin-top: 30px; background: linear-gradient(to right, #4D50A1, #DD2792); color: white; border-radius: 10px; height: 45px; font-weight: bold;"
 					variant="raised"
 					on:click={handleSubmit}
+					disabled={loadingSignup}
 				>
+					{#if loadingSignup}
+						<CircularProgress
+							style="height: 16px; width: 16px; margin-right: 16px;"
+							indeterminate
+						/>
+					{/if}
 					<Label>Registrarse</Label>
 				</Button>
 				<p class="dont-have-account-box">
@@ -216,6 +233,27 @@
 			</form>
 		</Card>
 	</div>
+	<PopupDialog
+		open={openSignupSuccessPopup}
+		type="success"
+		title="Cuenta creada exitosamente"
+		bodyText="Su cuenta se ha creado con éxito."
+		okText="Ok"
+		onOkClick={() => {
+			openSignupSuccessPopup = false;
+			goto('/home');
+		}}
+	/>
+	<PopupDialog
+		open={signupErrorMsg}
+		type="error"
+		title="Error al crear cuenta"
+		bodyText={signupErrorMsg}
+		okText="Ok"
+		onOkClick={() => {
+			signupErrorMsg = null;
+		}}
+	/>
 </body>
 
 <style>

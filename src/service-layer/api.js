@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-export async function getData(endpoint) {
+export async function get(endpoint) {
 	try {
 		const response = await axios.get(`${BASE_URL}/${endpoint}`);
 		return response.data;
@@ -12,7 +12,7 @@ export async function getData(endpoint) {
 	}
 }
 
-export async function postData(endpoint, data) {
+export async function post(endpoint, data) {
 	try {
 		const response = await axios.post(`${BASE_URL}/${endpoint}`, data);
 		return response.data;
@@ -22,7 +22,7 @@ export async function postData(endpoint, data) {
 	}
 }
 
-export async function putData(endpoint, data) {
+export async function put(endpoint, data) {
 	try {
 		const response = await axios.put(`${BASE_URL}/${endpoint}`, data);
 		return response.data;
@@ -32,7 +32,7 @@ export async function putData(endpoint, data) {
 	}
 }
 
-export async function deleteData(endpoint) {
+export async function del(endpoint) {
 	try {
 		const response = await axios.delete(`${BASE_URL}/${endpoint}`);
 		return response.data;

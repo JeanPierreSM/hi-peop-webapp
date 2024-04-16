@@ -39,3 +39,7 @@ Luego de instalar el componente deseado, correr:
 ```bash
 npm run prepare
 ```
+
+## Icons
+
+https://svelte-icons.vercel.app/
