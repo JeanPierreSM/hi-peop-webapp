@@ -8,10 +8,10 @@
 	import * as yup from 'yup';
 	import triggerYupValidation from '../../utils/triggerYupValidation';
 	import HelperText from '../../components/HelperText.svelte';
-	import { post } from '../../service-layer/api';
 	import PopupDialog from '../../components/PopupDialog.svelte';
 	import CircularProgress from '@smui/circular-progress';
 	import { goto } from '$app/navigation';
+	import { login } from '../../services/services';
 
 	let email = '';
 	let password = '';
@@ -43,7 +43,9 @@
 			errors = {};
 			const payload = { email, password };
 			loadingLogin = true;
-			await post('auth/login', payload);
+			const data = await login(payload);
+			const newToken = data.Authorization;
+			localStorage.setItem('token', newToken);
 			goto('/home');
 		} catch (error) {
 			if (error.inner) {
@@ -52,10 +54,9 @@
 					acc[curr.path] = curr.message;
 					return acc;
 				}, {});
-			} else {
+			} else if (error.response?.data?.message) {
 				// handle API calls errors
-				loginErrorMsg = error?.message;
-				console.error('Error: ', error?.message);
+				loginErrorMsg = error.response.data.message;
 			}
 		} finally {
 			loadingLogin = false;
@@ -72,6 +73,17 @@
 
 <body>
 	<img class="logo" src="hipeop-logo.png" alt="logo" style="width: 200px;" />
+	{#if loginErrorMsg}
+		<div class="error-msg-box">
+			<p class="error-msg">Error al iniciar sesión: {loginErrorMsg}</p>
+			<button
+				class="close-btn"
+				on:click={() => {
+					loginErrorMsg = null;
+				}}>✕</button
+			>
+		</div>
+	{/if}
 	<div class="form-card-container">
 		<Card variant="outlined" padded>
 			<div class="login-box">Iniciar sesión</div>
@@ -126,16 +138,6 @@
 			</form>
 		</Card>
 	</div>
-	<PopupDialog
-		open={loginErrorMsg}
-		type="error"
-		title="Error al iniciar sesión"
-		bodyText={loginErrorMsg}
-		okText="Ok"
-		onOkClick={() => {
-			loginErrorMsg = null;
-		}}
-	/>
 </body>
 
 <style>
@@ -193,5 +195,38 @@
 		width: 28px;
 		height: 28px;
 		color: #4d50a1;
+	}
+	.error-msg-box {
+		background-color: #ff6666;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		max-width: 390px;
+		margin: auto;
+		color: white;
+		padding: 20px;
+		border-radius: 5px;
+		margin-bottom: 20px;
+		position: relative;
+	}
+
+	.error-msg {
+		margin: 0;
+		font-size: 16px;
+		font-weight: 500;
+		text-align: left;
+		margin-bottom: 10px;
+	}
+
+	.close-btn {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		background: none;
+		border: none;
+		color: white;
+		font-size: 18px;
+		cursor: pointer;
+		padding: 5px;
 	}
 </style>
