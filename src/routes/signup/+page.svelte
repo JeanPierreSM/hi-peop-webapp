@@ -79,6 +79,7 @@
 			const data = await register(payload);
 			const newToken = data.Authorization;
 			localStorage.setItem('token', newToken);
+			localStorage.setItem('user', JSON.stringify(data.data));
 			openSignupSuccessPopup = true;
 		} catch (error) {
 			if (error.inner) {

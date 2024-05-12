@@ -8,7 +8,6 @@
 	import * as yup from 'yup';
 	import triggerYupValidation from '../../utils/triggerYupValidation';
 	import HelperText from '../../components/HelperText.svelte';
-	import PopupDialog from '../../components/PopupDialog.svelte';
 	import CircularProgress from '@smui/circular-progress';
 	import { goto } from '$app/navigation';
 	import { login } from '../../services/services';
@@ -46,6 +45,7 @@
 			const data = await login(payload);
 			const newToken = data.Authorization;
 			localStorage.setItem('token', newToken);
+			localStorage.setItem('user', JSON.stringify(data.data));
 			goto('/home');
 		} catch (error) {
 			if (error.inner) {
