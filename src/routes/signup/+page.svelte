@@ -116,7 +116,7 @@
 </script>
 
 <body>
-	<img class="logo" src="hipeop-logo.png" alt="logo" style="width: 200px;" />
+	<img class="w-48 mx-auto mt-8 mb-8" src="hipeop-logo.png" alt="logo" />
 	{#if signupErrorMsg}
 		<div class="error-msg-box">
 			<p class="error-msg">Error al crear cuenta: {signupErrorMsg}</p>
@@ -254,7 +254,7 @@
 		okText="Ok"
 		onOkClick={() => {
 			openSignupSuccessPopup = false;
-			goto('/home');
+			goto('/home/overview');
 		}}
 	/>
 </body>
@@ -297,12 +297,6 @@
 		display: flex;
 		flex-direction: column;
 		padding: 15px 15px 0 15px;
-	}
-	.logo {
-		width: 100px;
-		height: auto;
-		margin-top: 1rem;
-		margin-bottom: 1rem;
 	}
 	.dont-have-account-box {
 		font-size: 15px;

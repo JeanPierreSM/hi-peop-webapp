@@ -46,7 +46,7 @@
 			const newToken = data.Authorization;
 			localStorage.setItem('token', newToken);
 			localStorage.setItem('user', JSON.stringify(data.data));
-			goto('/home');
+			goto('/home/overview');
 		} catch (error) {
 			if (error.inner) {
 				// handle yup validation errors
@@ -72,7 +72,7 @@
 </script>
 
 <body>
-	<img class="logo" src="hipeop-logo.png" alt="logo" style="width: 200px;" />
+	<img class="w-48 mx-auto mt-8 mb-8" src="hipeop-logo.png" alt="logo" />
 	{#if loginErrorMsg}
 		<div class="error-msg-box">
 			<p class="error-msg">Error al iniciar sesión: {loginErrorMsg}</p>
@@ -178,12 +178,6 @@
 		body {
 			max-width: none;
 		}
-	}
-	.logo {
-		width: 100px;
-		height: auto;
-		margin-top: 2rem;
-		margin-bottom: 2rem;
 	}
 	.dont-have-account-box {
 		font-size: 15px;
